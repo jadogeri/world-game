@@ -1,21 +1,67 @@
 {
-  "$schema": "https://turborepo.dev/schema.json",
+  "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    "codegen": {
+      "cache": true,
+      "inputs": ["orval.config.ts", "openapi.yaml", "src/api-spec/**/*"],
+      "outputs": ["src/generated/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "typecheck": {
+      "dependsOn": ["codegen", "^typecheck"],
+      "outputs": ["*.tsbuildinfo"]
+    },
+    "build": {
+      "dependsOn": ["codegen", "^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", "*.tsbuildinfo", ".next/**"]
     },
     "dev": {
+      "dependsOn": ["codegen"],
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "CLIENT_PORT",
+        "SERVER_PORT",
+        "BASE_PATH",
+        "VITE_API_URL",
+        "SESSION_SECRET",
+        "BETTER_AUTH_URL",
+        "TURSO_API_URL", 
+        "TURSO_DATABASE_URL",
+        "TURSO_AUTH_TOKEN"  
+      ]
+    },
+    "start": {
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:drop": {
+      "cache": false
+    },
+    "db:clear": {
+      "cache": false
+    },
+    "db:test": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false
     }
   }
 }

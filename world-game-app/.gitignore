@@ -1,5 +1,14 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Agent / workspace local data
+.local/
+
+# Local SQLite database files
+*.db
+*.db-shm
+*.db-wal
+nofs-local.db
+
 # Dependencies
 node_modules
 .pnp

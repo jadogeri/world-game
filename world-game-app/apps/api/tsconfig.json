@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "outDir": "dist",
+    "rootDirs": ["src", "test"],
+    "types": ["node", "jest"],
+    "resolveJsonModule": true
+  },
+  "include": ["src", "test"],
+  "references": [
+    {
+      "path": "../../packages/db"
+    },
+    {
+      "path": "../../packages/api-zod"
+    }
+  ]
+}
+

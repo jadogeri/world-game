@@ -1,0 +1,344 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: game
+    description: Trivia game operations
+  - name: scores
+    description: Leaderboard operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /game/question:
+    get:
+      operationId: getQuestion
+      tags: [game]
+      summary: Get a random trivia question
+      description: Returns a randomly generated question for the given difficulty and level, with a signed answer token used to verify the answer later.
+      parameters:
+        - name: difficulty
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Difficulty"
+        - name: level
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 15
+      responses:
+        "200":
+          description: A trivia question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+  /game/verify:
+    post:
+      operationId: verifyAnswer
+      tags: [game]
+      summary: Verify a submitted answer
+      description: Checks a selected option index against the signed answer token and returns whether it was correct.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnswerSubmission"
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnswerResult"
+        "400":
+          description: Invalid or expired token
+  /game/fifty-fifty:
+    post:
+      operationId: useFiftyFifty
+      tags: [game]
+      summary: Use the 50/50 lifeline
+      description: Returns two wrong option indices to eliminate for the given question token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FiftyFiftyRequest"
+      responses:
+        "200":
+          description: Indices to eliminate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FiftyFiftyResult"
+        "400":
+          description: Invalid or expired token
+  /game/ask-audience:
+    post:
+      operationId: askAudience
+      tags: [game]
+      summary: Use the Ask the Audience lifeline
+      description: Simulates a studio audience vote and returns a vote percentage for each option, weighted toward the correct answer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskAudienceRequest"
+      responses:
+        "200":
+          description: Audience vote percentages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskAudienceResult"
+        "400":
+          description: Invalid or expired token
+  /game/ask-expert:
+    post:
+      operationId: askExpert
+      tags: [game]
+      summary: Use the Ask the Expert lifeline
+      description: Returns the index of the correct option, as recommended by the expert.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskExpertRequest"
+      responses:
+        "200":
+          description: Expert's recommended option
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskExpertResult"
+        "400":
+          description: Invalid or expired token
+  /scores:
+    get:
+      operationId: listTopScores
+      tags: [scores]
+      summary: List top leaderboard scores
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Top scores ordered by winnings descending
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Score"
+    post:
+      operationId: createScore
+      tags: [scores]
+      summary: Save a completed game's score
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScoreInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Score"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    Difficulty:
+      type: string
+      enum: [easy, medium, hard]
+    QuestionType:
+      type: string
+      enum:
+        [
+          flag,
+          capital,
+          continent,
+          currency,
+          dish,
+          language,
+          tld,
+          government,
+          independence,
+          symbol,
+          density,
+          religion,
+        ]
+    Question:
+      type: object
+      required:
+        [id, difficulty, level, type, prompt, options, token, flagImage]
+      properties:
+        id:
+          type: string
+        difficulty:
+          $ref: "#/components/schemas/Difficulty"
+        level:
+          type: integer
+        type:
+          $ref: "#/components/schemas/QuestionType"
+        prompt:
+          type: string
+        flagImage:
+          type: ["string", "null"]
+          description: Data URI of a country flag, present only for "flag" type questions
+        options:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            type: string
+        token:
+          type: string
+          description: Opaque signed token encoding the correct answer; required to verify or use a lifeline on this question
+    AnswerSubmission:
+      type: object
+      required: [token, selectedIndex]
+      properties:
+        token:
+          type: string
+        selectedIndex:
+          type: integer
+          minimum: 0
+          maximum: 3
+    AnswerResult:
+      type: object
+      required: [correct, correctIndex, correctAnswer]
+      properties:
+        correct:
+          type: boolean
+        correctIndex:
+          type: integer
+        correctAnswer:
+          type: string
+    FiftyFiftyRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    FiftyFiftyResult:
+      type: object
+      required: [removeIndices]
+      properties:
+        removeIndices:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            type: integer
+    AskAudienceRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    AskAudienceResult:
+      type: object
+      required: [percentages]
+      properties:
+        percentages:
+          type: array
+          minItems: 4
+          maxItems: 4
+          description: Simulated audience vote percentage for each option, in option order; sums to 100.
+          items:
+            type: integer
+    AskExpertRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    AskExpertResult:
+      type: object
+      required: [correctIndex]
+      properties:
+        correctIndex:
+          type: integer
+          description: The index the expert recommends, always the correct answer.
+    ScoreInput:
+      type: object
+      required: [playerName, winnings, difficulty, questionsAnswered, correctAnswers, won]
+      properties:
+        playerName:
+          type: string
+          minLength: 1
+          maxLength: 40
+        winnings:
+          type: integer
+          minimum: 0
+        difficulty:
+          $ref: "#/components/schemas/Difficulty"
+        questionsAnswered:
+          type: integer
+          minimum: 0
+        correctAnswers:
+          type: integer
+          minimum: 0
+        won:
+          type: boolean
+    Score:
+      type: object
+      required:
+        [id, playerName, winnings, difficulty, questionsAnswered, correctAnswers, won, createdAt]
+      properties:
+        id:
+          type: integer
+        playerName:
+          type: string
+        winnings:
+          type: integer
+        difficulty:
+          $ref: "#/components/schemas/Difficulty"
+        questionsAnswered:
+          type: integer
+        correctAnswers:
+          type: integer
+        won:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
