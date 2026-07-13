@@ -1,11 +1,11 @@
 {
   "buildCommand": "pnpm --filter=@repo/web build",
-  "outputDirectory": "apps/web/dist",
+  "outputDirectory": "apps/web/dist/public",
   "installCommand": "pnpm install",
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://world-game-api.onrender.com/api/:path*"
+      "destination": "https://onrender.com*"
     },
     {
       "source": "/((?!api/).*)",
