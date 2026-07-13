@@ -21,9 +21,9 @@ This project follows the [Code of Conduct](CODE_OF_CONDUCT.md). By participating
 
 ```bash
 pnpm install
-pnpm --filter @workspace/db run push        # push the leaderboard schema (dev only)
-pnpm --filter @workspace/api-server run dev # API server, port 5000
-pnpm --filter @workspace/world-game run dev # frontend, Vite dev server
+pnpm --filter @repo/db run push        # push the leaderboard schema (dev only)
+pnpm --filter @repo/api run dev # API server, port 5000
+pnpm --filter @repo/world-game run dev # frontend, Vite dev server
 ```
 
 See [README.md](README.md) for the full architecture, API reference, and required environment variables/secrets.
@@ -43,9 +43,9 @@ This is a pnpm workspace monorepo:
 1. Run `pnpm run typecheck` before and after your change to confirm you haven't introduced regressions.
 2. If you change `lib/api-spec/openapi.yaml`, regenerate the derived packages:
    ```bash
-   pnpm --filter @workspace/api-spec run codegen
+   pnpm --filter @repo/api-spec run codegen
    ```
-3. If you change `lib/db` schema, push it with `pnpm --filter @workspace/db run push` (dev only).
+3. If you change `lib/db` schema, push it with `pnpm --filter @repo/db run push` (dev only).
 4. Run `pnpm run build` to confirm a full build succeeds.
 
 ## Coding Standards

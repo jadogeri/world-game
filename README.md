@@ -263,7 +263,7 @@ Only completed or walked-away games are persisted — in-progress quiz state liv
 pnpm install
 
 # push the leaderboard schema to Turso (dev only)
-pnpm --filter @workspace/db run push
+pnpm --filter @repo/db run push
 ```
 
 <a id="6-configuration"></a>
@@ -274,16 +274,19 @@ pnpm --filter @workspace/db run push
 | `TURSO_DATABASE_URL` | env var | Turso (libsql) database connection URL |
 | `TURSO_AUTH_TOKEN` | secret | Turso database auth token |
 | `SESSION_SECRET` | secret | Symmetric key used to encrypt/decrypt per-question answer tokens |
+| `CLIENT_PORT` | env var | The port number used to run the Vite frontend development server (e.g., 4000) |
+| `SERVER_PORT` | env var | The port number used to run the express backend development server (e.g., 3000) |
+
 
 <a id="7-usage"></a>
 ## **7. Usage**
 
 ```bash
 # run the API server (port 5000)
-pnpm --filter @workspace/api-server run dev
+pnpm --filter @repo/api run dev
 
 # run the frontend (Vite dev server)
-pnpm --filter @workspace/world-game run dev
+pnpm --filter @repo/web run dev
 
 # typecheck everything
 pnpm run typecheck
@@ -292,7 +295,7 @@ pnpm run typecheck
 pnpm run build
 
 # regenerate API hooks/schemas after editing lib/api-spec/openapi.yaml
-pnpm --filter @workspace/api-spec run codegen
+pnpm --filter @repo/api-spec run codegen
 ```
 
 ---
@@ -321,7 +324,7 @@ pnpm --filter @workspace/api-spec run codegen
 <a id="10-bugs-fixed-and-lessons-learned"></a>
 ## **10. Bugs Fixed & Lessons Learned**
 
-- **Native-binding externals in esbuild bundles** — `@libsql/client` must be listed as a direct dependency of any package that imports `@workspace/db` and gets bundled with esbuild, not just a transitive workspace dependency. esbuild externalizes native-binding packages (like `libsql`), and Node resolves those externals relative to the bundled file's own `node_modules`, not transitive workspace deps. `build.mjs` externalizes `libsql`/`@libsql/*` alongside other native-module packages for the same reason.
+- **Native-binding externals in esbuild bundles** — `@libsql/client` must be listed as a direct dependency of any package that imports `@repo/db` and gets bundled with esbuild, not just a transitive workspace dependency. esbuild externalizes native-binding packages (like `libsql`), and Node resolves those externals relative to the bundled file's own `node_modules`, not transitive workspace deps. `build.mjs` externalizes `libsql`/`@libsql/*` alongside other native-module packages for the same reason.
 - **Dataset joins degrade gracefully** — supplementary country datasets (TLD, government, independence, symbol, density, religion) don't perfectly match the base dataset's country names. Rather than erroring on a mismatch, unmatched countries simply get `null` for that field, and question generation skips any country/category combination with a null answer.
 - **Sparse fields excluded from harder difficulty pools** — the "national symbol" category has too few non-null values among less-populous countries to reliably build 4-option multiple choice, so it was removed from the Hard difficulty rotation while remaining available at Easy/Medium.
 - **Re-render isolation for animated UI** — a per-second countdown timer re-rendering the whole game screen caused the money-ladder's active-row highlight animation to stutter. Fixed by memoizing the ladder component (keyed only on level/name/difficulty) and driving the highlight's position via measured DOM rects rather than mount/unmount-based shared-layout animation, so it's immune to unrelated parent re-renders.
