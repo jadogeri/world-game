@@ -15,7 +15,7 @@ tags:
   - name: scores
     description: Leaderboard operations
 paths:
-  /healthz:
+  /health:
     get:
       operationId: healthCheck
       tags: [health]
