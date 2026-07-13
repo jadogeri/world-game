@@ -74,7 +74,7 @@ Backend developers, frontend engineers, and technical reviewers evaluating the a
 
 All routes are served by `api-server` and defined in `lib/api-spec/openapi.yaml` (source of truth), from which Zod schemas and React Query hooks are code-generated via Orval.
 
-### Health — `GET /healthz`
+### Health — `GET /health`
 
 Returns `{ "status": "ok" }`.
 
