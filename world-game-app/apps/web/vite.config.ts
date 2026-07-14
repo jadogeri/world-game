@@ -2,42 +2,47 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import { fileURLToPath } from "url";
+
+// 💡 FIX: Robust directory resolution fallback that guarantees stability in production pipelines
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   // Resolves upward to the monorepo root directory where your master .env lives
-  const rootEnvPath = path.resolve(import.meta.dirname, "../..");
+  const rootEnvPath = path.resolve(__dirname, "../..");
   
-  // 💡 FIXED: Third argument MUST be [""] inside an array to fetch variables without a 'VITE_' prefix
+  // Fetches workspace variables with or without a 'VITE_' prefix seamlessly
   const env = loadEnv(mode, rootEnvPath, [""]);
 
-  // Tracks your updated variable names (CLIENT_PORT & SERVER_PORT) Safely
-  const frontendPort = env.CLIENT_PORT ? parseInt(env.CLIENT_PORT, 10) : 4000;
+  // 💡 Safe fallback evaluation: Uses your vars locally, handles missing envs on Vercel gracefully
+  const rawPort = env.CLIENT_PORT || process.env.PORT || "4000";
+  const frontendPort = parseInt(rawPort, 10);
   const apiPort = env.SERVER_PORT ? parseInt(env.SERVER_PORT, 10) : 3000;
 
-  // Final validation check to prevent NaN parsing crashes
+  // Final check ensuring local dev targets don't parse to corrupted NaN states
   if (Number.isNaN(frontendPort)) {
-    throw new Error(`Invalid CLIENT_PORT value parsed from environment config.`);
+    throw new Error(`Invalid port value parsed from environment configurations.`);
   }
 
-  const basePath = env.BASE_PATH || "/";
+  const basePath = env.BASE_PATH || process.env.BASE_PATH || "/";
 
   return {
     base: basePath,
     plugins: [
       tailwindcss(),
       react(),
-
     ],
     resolve: {
       alias: {
-        "@": path.resolve(import.meta.dirname, "src"),
-        "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
+        "@": path.resolve(__dirname, "src"),
+        "@assets": path.resolve(__dirname, "..", "..", "attached_assets"),
       },
-      dedupe: ["react", "react-dom"],
+      // 💡 FIXED: Explicitly force these packages to never duplicate their context state
+      dedupe: ["react", "react-dom", "@tanstack/react-query"],
     },
-    root: path.resolve(import.meta.dirname),
+    root: path.resolve(__dirname),
     build: {
-      outDir: path.resolve(import.meta.dirname, "dist/public"),
+      outDir: path.resolve(__dirname, "dist/public"),
       emptyOutDir: true,
     },
     server: {
@@ -48,7 +53,7 @@ export default defineConfig(({ mode }) => {
       fs: {
         strict: true,
       },
-      // Proxies frontend requests smoothly over to NestJS
+      // Proxies frontend requests smoothly over to your server context during local dev workflows
       proxy: {
         "/api": {
           target: `http://localhost:${apiPort}`,
@@ -64,72 +69,3 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
-
-/*
-import path from 'path';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
-
-const rawPort = process.env.PORT;
-
-if (!rawPort) {
-  throw new Error(
-    'PORT environment variable is required but was not provided.',
-  );
-}
-
-const port = Number(rawPort);
-
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
-
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    'BASE_PATH environment variable is required but was not provided.',
-  );
-}
-
-export default defineConfig({
-  base: basePath,
-  plugins: [
-    react(),
-    tailwindcss(),
-    runtimeErrorOverlay(),
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(import.meta.dirname, 'src'),
-      '@assets': path.resolve(
-        import.meta.dirname,
-        '..',
-        '..',
-        'attached_assets',
-      ),
-    },
-    dedupe: ['react', 'react-dom'],
-  },
-  root: path.resolve(import.meta.dirname),
-  build: {
-    outDir: path.resolve(import.meta.dirname, 'dist/public'),
-    emptyOutDir: true,
-  },
-  server: {
-    port,
-    strictPort: true,
-    host: '0.0.0.0',
-    allowedHosts: true,
-    fs: {
-      strict: true,
-    },
-  },
-  preview: {
-    port,
-    host: '0.0.0.0',
-    allowedHosts: true,
-  },
-});
-*/
