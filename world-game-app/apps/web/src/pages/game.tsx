@@ -29,7 +29,7 @@ type GamePhase = 'LOADING' | 'READY' | 'PLAYING' | 'VERIFYING' | 'REVEAL' | 'GAM
 // instead directly animates `top`/`height` with a spring, guaranteeing a
 // slow slide between rows every time `level` changes, regardless of what
 // else causes the component tree to re-render.
-const MoneyLadder = React.memo(function MoneyLadder({
+export const MoneyLadder = React.memo(function MoneyLadder({
   level,
   playerName,
   difficulty,

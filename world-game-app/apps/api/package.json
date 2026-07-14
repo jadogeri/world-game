@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+"typecheck": "tsc --build tsconfig.json",
     "test": "jest --config jest.config.cjs",
     "test:unit": "jest --config jest.config.cjs test/unit",
     "test:integration": "jest --config jest.config.cjs test/integration",
