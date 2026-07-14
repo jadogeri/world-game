@@ -7,7 +7,14 @@
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
     "build": "vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e",
+    "test:unit": "vitest run --config vitest.config.ts --project unit",
+    "test:integration": "vitest run --config vitest.config.ts --project integration",
+    "test:e2e": "playwright test --config playwright.config.ts",
+    "lint": "eslint . --ext .ts,.tsx",
+    "test:coverage": "vitest run --config vitest.config.ts --coverage"
+
   },
   "dependencies": {
     "@repo/api-client-react": "workspace:*",
@@ -66,11 +73,18 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "vite": "catalog:"
+    "jsdom": "^25.0.1",
+    "vite": "catalog:",
+    "vitest": "^3.0.5"
   }
 }
