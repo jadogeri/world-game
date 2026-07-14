@@ -108,8 +108,8 @@ describe("full game flow (e2e)", () => {
     expect(res.status).toBe(400);
   });
 
-  it("GET /api/healthz responds so the deployment health check works end-to-end", async () => {
-    const res = await request(baseUrl).get("/api/healthz");
+  it("GET /api/health responds so the deployment health check works end-to-end", async () => {
+    const res = await request(baseUrl).get("/api/health");
     expect(res.status).toBe(200);
   });
 });
