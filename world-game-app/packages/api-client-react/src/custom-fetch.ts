@@ -322,11 +322,82 @@ async function parseSuccessBody(
   }
 }
 
+/*
 export async function customFetch<T = unknown>(
   input: RequestInfo | URL,
   options: CustomFetchOptions = {},
 ): Promise<T> {
   input = applyBaseUrl(input);
+  const { responseType = "auto", headers: headersInit, ...init } = options;
+
+  const method = resolveMethod(input, init.method);
+
+  if (init.body != null && (method === "GET" || method === "HEAD")) {
+    throw new TypeError(`customFetch: ${method} requests cannot have a body.`);
+  }
+
+  const headers = mergeHeaders(isRequest(input) ? input.headers : undefined, headersInit);
+
+  if (
+    typeof init.body === "string" &&
+    !headers.has("content-type") &&
+    looksLikeJson(init.body)
+  ) {
+    headers.set("content-type", "application/json");
+  }
+
+  if (responseType === "json" && !headers.has("accept")) {
+    headers.set("accept", DEFAULT_JSON_ACCEPT);
+  }
+
+  // Attach bearer token when an auth getter is configured and no
+  // Authorization header has been explicitly provided.
+  if (_authTokenGetter && !headers.has("authorization")) {
+    const token = await _authTokenGetter();
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+  }
+
+  const requestInfo = { method, url: resolveUrl(input) };
+
+  const response = await fetch(input, { ...init, method, headers });
+
+  if (!response.ok) {
+    const errorData = await parseErrorBody(response, method);
+    throw new ApiError(response, errorData, requestInfo);
+  }
+
+  return (await parseSuccessBody(response, responseType, requestInfo)) as T;
+}
+
+*/
+export async function customFetch<T = unknown>(
+  input: RequestInfo | URL,
+  options: CustomFetchOptions = {},
+): Promise<T> {
+  input = applyBaseUrl(input);
+
+  // 💡 FIXED: Uses globalThis to resolve variables dynamically without triggering missing browser/node type errors
+  const productionApiUrl = 
+    (globalThis as any).import?.meta?.env?.VITE_API_URL || 
+    (globalThis as any).process?.env?.VITE_API_URL;
+
+  // 💡 THE SMART SWITCH: If VITE_API_URL is active (Production), substitute the local "/api" route prefix.
+  // If it's missing (Local Dev), this block is skipped, keeping your working local Vite proxy active.
+  if (productionApiUrl) {
+    if (typeof input === "string") {
+      input = input.replace(/^\/api/, productionApiUrl);
+    } else if (input instanceof URL) {
+      if (input.pathname.startsWith("/api")) {
+        input = new URL(input.href.replace(input.origin + "/api", productionApiUrl));
+      }
+    } else if (input && "url" in input) {
+      const updatedUrl = input.url.replace(/^\/api/, productionApiUrl);
+      input = new Request(updatedUrl, input);
+    }
+  }
+
   const { responseType = "auto", headers: headersInit, ...init } = options;
 
   const method = resolveMethod(input, init.method);
