@@ -378,12 +378,12 @@ export async function customFetch<T = unknown>(
 ): Promise<T> {
   input = applyBaseUrl(input);
 
-  // 💡 FIXED: Access the environment variable using Vite's explicit compile-time syntax
-  // By assigning it directly here, Vite will substitute it with your Vercel URL string during build time.
-  const productionApiUrl = (import.meta as any)['env' + '']?.VITE_API_URL || '';
+  // 💡 FIXED: Use Vite's native text replacement structure explicitly
+  // 💡 FIXED: Uses typecasting to dictionary brackets to bypass strict tsc package type checking
+  // while preserving Vite's structural string requirements for production build text replacement.
+  const productionApiUrl = (import.meta as Record<string, any>)['env']?.VITE_API_URL || '';
 
   // 💡 THE SMART SWITCH: If VITE_API_URL is active (Production), substitute the local "/api" route prefix.
-  // If it's missing (Local Dev), this block is skipped, keeping your working local Vite proxy active.
   if (productionApiUrl) {
     if (typeof input === "string") {
       input = input.replace(/^\/api/, productionApiUrl);
@@ -397,21 +397,17 @@ export async function customFetch<T = unknown>(
     }
   }
 
-  // --- Rest of your original customFetch function continues below ---
+  // --- Leave the rest of your original customFetch function completely untouched ---
   const { responseType = "auto", headers: headersInit, ...init } = options;
   const method = resolveMethod(input, init.method);
-
+  
   if (init.body != null && (method === "GET" || method === "HEAD")) {
     throw new TypeError(`customFetch: ${method} requests cannot have a body.`);
   }
 
   const headers = mergeHeaders(isRequest(input) ? input.headers : undefined, headersInit);
 
-  if (
-    typeof init.body === "string" &&
-    !headers.has("content-type") &&
-    looksLikeJson(init.body)
-  ) {
+  if (typeof init.body === "string" && !headers.has("content-type") && looksLikeJson(init.body)) {
     headers.set("content-type", "application/json");
   }
 
