@@ -1,0 +1,96 @@
+name: CI — Build
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'nofs/**'
+      - '.github/workflows/ci-build.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'nofs/**'
+      - '.github/workflows/ci-build.yml'
+
+defaults:
+  run:
+    working-directory: world-game-app
+
+jobs:
+  build:
+    name: Build all packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: world-game-app/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm --filter @repo/db run build
+
+      - name: Build api
+        run: pnpm --filter api run build
+        env:
+          SESSION_SECRET: ci-build-secret
+          TURSO_DATABASE_URL: file:./ci-build.db
+
+      - name: Build web
+        run: pnpm --filter web run build
+        env:
+          CLIENT_PORT: 4000
+          SERVER_PORT: 3000
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-dist
+          path: world-game-app/apps/api/dist/
+          retention-days: 7
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: world-game-app/apps/web/dist/
+          retention-days: 7
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: world-game-app/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace packages
+        run: pnpm --filter @repo/db run build
+
+      - name: Lint api
+        run: pnpm --filter api run lint
+        continue-on-error: true
+
+      - name: Lint web
+        run: pnpm --filter web run lint
+        continue-on-error: true
