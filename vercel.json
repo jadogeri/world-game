@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm --filter=@repo/web build",
-  "outputDirectory": "world-game-app/apps/web/dist/public",
+  "outputDirectory": "dist/public",
   "installCommand": "pnpm install",
   "rewrites": [
     {
