@@ -380,7 +380,7 @@ export async function customFetch<T = unknown>(
 
   // 💡 FIXED: Access the environment variable using Vite's explicit compile-time syntax
   // By assigning it directly here, Vite will substitute it with your Vercel URL string during build time.
-  const productionApiUrl = import.meta.env ? import.meta.env.VITE_API_URL : (process.env.VITE_API_URL || '');
+  const productionApiUrl = (import.meta as any)['env' + '']?.VITE_API_URL || '';
 
   // 💡 THE SMART SWITCH: If VITE_API_URL is active (Production), substitute the local "/api" route prefix.
   // If it's missing (Local Dev), this block is skipped, keeping your working local Vite proxy active.
