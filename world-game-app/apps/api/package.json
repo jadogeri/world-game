@@ -11,7 +11,10 @@
     "test": "jest --config jest.config.cjs",
     "test:unit": "jest --config jest.config.cjs test/unit",
     "test:integration": "jest --config jest.config.cjs test/integration",
-    "test:e2e": "jest --config jest.config.cjs test/e2e"
+    "test:e2e": "jest --config jest.config.cjs test/e2e",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test:coverage": "jest --coverage"
+
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",
