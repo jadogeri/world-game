@@ -5,6 +5,7 @@
     "api:dev": "pnpm --filter @repo/api run dev",
     "web:dev": "pnpm --filter @repo/web run dev",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "test": "pnpm run api:test && pnpm run web:test && pnpm run db:test",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -23,6 +24,7 @@
     "api:test:coverage": "pnpm --filter @repo/api run test:coverage",
     "web:test:coverage": "pnpm --filter @repo/web run test:coverage",
     "db:test:coverage": "pnpm --filter @repo/db run test:coverage"
+    
 
   },
   "devDependencies": {
