@@ -82,10 +82,10 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "catalog:",
     "concurrently": "^10.0.3",
     "jsdom": "^25.0.1",
     "vite": "catalog:",
-    "vitest": "^3.0.5"
+    "vitest": "catalog:"
   }
 }
