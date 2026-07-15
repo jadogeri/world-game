@@ -1,6 +1,3 @@
-
-
-
 name: CI — Tests
 
 on:
@@ -64,6 +61,9 @@ jobs:
   test-web:
     name: Web unit tests
     runs-on: ubuntu-latest
+    env:
+      # Pin the browser binaries path inside the workspace so it handles cache permissions cleanly
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
 
     steps:
       - uses: actions/checkout@v4
@@ -81,11 +81,43 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Cache Playwright browsers based on your pnpm lockfile
+      - name: Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.playwright-browsers
+          key: ${{ runner.os }}-playwright-${{ hashFiles('world-game-app/pnpm-lock.yaml') }}
+
+      # Downloads the Chromium shell binary if the cache misses
+      - name: Install Playwright Chromium Binary & OS Libraries
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter web exec playwright install chromium --with-deps
+
+      # Installs system libraries if the cache hits, keeping runs under 30 seconds
+      - name: Install Missing Linux Graphic Libraries
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter web exec playwright install-deps chromium
+
       - name: Run Web tests
         run: pnpm --filter web run test
+        env:
+          CI: true
 
+      # The coverage script will still run perfectly right after E2E finishes
       - name: Web test coverage
         run: pnpm --filter web run test:coverage
+        env:
+          CI: true
+
+      # Playwright HTML reports help debug any unexpected test regressions in CI
+      - name: Upload Playwright Failure Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: world-game-app/apps/web/playwright-report/
+          retention-days: 7
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -115,3 +147,6 @@ jobs:
 
       - name: Run DB package tests
         run: pnpm --filter @repo/db run test
+
+
+

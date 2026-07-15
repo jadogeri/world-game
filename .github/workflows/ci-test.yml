@@ -1,3 +1,4 @@
+
 name: CI — Tests
 
 on:
@@ -145,5 +146,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # 1. Compile workspace files so Vitest handles relative internal TS paths accurately
+      - name: Build workspace packages
+        run: pnpm --filter @repo/db run build
+
+      # 2. Execute your newly unified Vitest suite targeting your test folder
       - name: Run DB package tests
         run: pnpm --filter @repo/db run test
+
+      # 3. Track coverage outputs matching your script hooks
+      - name: DB test coverage
+        run: pnpm --filter @repo/db run test:coverage
+
+      # 4. Save code tracking details as a zip download artifact package
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: db-coverage
+          path: world-game-app/packages/db/coverage/

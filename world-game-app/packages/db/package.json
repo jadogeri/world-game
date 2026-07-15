@@ -19,8 +19,9 @@
     "db:clear": "tsx src/clear-db.ts",
     "db:test": "tsx src/test-db.ts",
     "pnpm:approve-builds": "pnpm approve-builds",
-    "test": "jest --config jest.config.cjs",
-    "test:coverage": "jest --config jest.config.cjs --coverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "push": "drizzle-kit push --config ./drizzle.config.ts",
     "push-force": "drizzle-kit push --force --config ./drizzle.config.ts"
   },
@@ -32,16 +33,10 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@types/jest": "catalog:",
     "dotenv": "catalog:",
     "drizzle-kit": "^0.31.10",
-    "jest": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "^3.2.7"
   }
 }
-
-
-
-
-
