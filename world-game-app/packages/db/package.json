@@ -32,7 +32,13 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/jest": "catalog:",
     "dotenv": "catalog:",
     "drizzle-kit": "^0.31.10"
   }
 }
+
+
+
+
+
