@@ -32,20 +32,20 @@ See [README.md](README.md) for the full architecture, API reference, and require
 
 This is a pnpm workspace monorepo:
 
-- `artifacts/api-server` — Express API (question generation, answer verification, leaderboard).
-- `artifacts/world-game` — React/Vite frontend.
-- `lib/db` — Drizzle schema + Turso client.
-- `lib/api-spec` — `openapi.yaml`, the source of truth for the API contract.
-- `lib/api-zod`, `lib/api-client-react` — generated from the OpenAPI spec via Orval; do not hand-edit.
+- `apps/api` — Express API (question generation, answer verification, leaderboard).
+- `apps/web` — React/Vite frontend.
+- `packages/db` — Drizzle schema + Turso client.
+- `packages/api-spec` — `openapi.yaml`, the source of truth for the API contract.
+- `packages/api-zod`, `packages/api-client-react` — generated from the OpenAPI spec via Orval; do not hand-edit.
 
 ## Development Workflow
 
 1. Run `pnpm run typecheck` before and after your change to confirm you haven't introduced regressions.
-2. If you change `lib/api-spec/openapi.yaml`, regenerate the derived packages:
+2. If you change `packages/api-spec/openapi.yaml`, regenerate the derived packages:
    ```bash
    pnpm --filter @repo/api-spec run codegen
    ```
-3. If you change `lib/db` schema, push it with `pnpm --filter @repo/db run push` (dev only).
+3. If you change `packages/db` schema, push it with `pnpm --filter @repo/db run push` (dev only).
 4. Run `pnpm run build` to confirm a full build succeeds.
 
 ## Coding Standards
@@ -57,10 +57,10 @@ This is a pnpm workspace monorepo:
 
 ## Adding a New Trivia Category
 
-1. Add the raw source JSON to `artifacts/api-server/src/data/sources/`.
-2. Merge it onto the base dataset in `artifacts/api-server/src/lib/countries.ts`, matching by country name and falling back to `null` for unmatched/missing entries.
-3. Add the new type to `QuestionType` in `lib/api-spec/openapi.yaml`, then run the codegen command above.
-4. Add a case in `artifacts/api-server/src/lib/questions.ts` following the existing null-skip + distractor-filter pattern.
+1. Add the raw source JSON to `apps/api/src/data/sources/`.
+2. Merge it onto the base dataset in `apps/api/src/lib/countries.ts`, matching by country name and falling back to `null` for unmatched/missing entries.
+3. Add the new type to `QuestionType` in `packages/api-spec/openapi.yaml`, then run the codegen command above.
+4. Add a case in `apps/api/src/lib/questions.ts` following the existing null-skip + distractor-filter pattern.
 5. Add the type to the appropriate difficulty tier(s) in `TYPES_BY_DIFFICULTY` — exclude it from a tier if too few countries have non-null data to build reliable 4-option questions.
 
 ## Commit Messages
