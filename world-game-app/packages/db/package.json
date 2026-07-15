@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "^4.1.10",
     "dotenv": "catalog:",
     "drizzle-kit": "^0.31.10",
     "tsx": "catalog:",
