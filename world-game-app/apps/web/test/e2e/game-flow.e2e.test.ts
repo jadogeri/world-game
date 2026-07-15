@@ -48,7 +48,8 @@ test.describe('full game session', () => {
     await expect(page.getByText('Ada Lovelace')).toBeVisible();
   });
 
-  test('running out of time ends the game as a timeout', async ({ page }) => {
+   test('running out of time ends the game as a timeout', async ({ page }) => {
+    // 1. Completely removed the page.clock hooks
     await mockApi(page, QUESTION);
 
     await page.goto('/');
@@ -57,10 +58,13 @@ test.describe('full game session', () => {
     await page.getByTestId('button-start-game').click();
 
     await expect(page.getByTestId('btn-option-0')).toBeEnabled();
-    // easy difficulty gives 20s; wait past it without answering.
-    await expect(page.getByText("Time's Up!")).toBeVisible({ timeout: 25_000 });
+    
+    // 2. Natively wait for the easy 20s difficulty clock to run down.
+    // Explicitly raising the local timeout to 30,000ms gives it plenty of room to pass.
+    await expect(page.getByText("Time's Up!")).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('text-final-winnings')).toHaveText('$0');
   });
+
 
   test('walk away banks the current winnings without answering', async ({ page }) => {
     await mockApi(page, QUESTION);

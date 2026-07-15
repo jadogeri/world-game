@@ -1,9 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
-// A fixed, unlikely-to-collide port for the standalone dev server this suite
-// spins up. It intentionally does NOT reuse the artifact's workflow-assigned
-// PORT/BASE_PATH so `pnpm test:e2e` also works outside the Replit workflow.
-const PORT = 4173;
+// Run on port 4000 to match your app's frontend configuration
+const PORT = 4000;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
@@ -16,14 +14,11 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: 'retain-on-failure',
   },
+  // Only boot the frontend Vite app. The API server is completely bypassed.
   webServer: {
-    command: 'pnpm run dev',
+    command: `pnpm run dev --port ${PORT}`,
     url: BASE_URL,
-    reuseExistingServer: false,
+    reuseExistingServer: true,
     timeout: 60_000,
-    env: {
-      PORT: String(PORT),
-      BASE_PATH: '/',
-    },
   },
 });

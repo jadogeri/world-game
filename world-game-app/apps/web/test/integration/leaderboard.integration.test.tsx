@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import React from 'react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { screen, within } from '@testing-library/react';
@@ -7,7 +9,7 @@ import { renderWithProviders } from '../test-utils';
 
 const useListTopScores = vi.fn();
 
-vi.mock('@workspace/api-client-react', () => ({
+vi.mock('@repo/api-client-react', () => ({
   useListTopScores: (...args: unknown[]) => useListTopScores(...args),
 }));
 

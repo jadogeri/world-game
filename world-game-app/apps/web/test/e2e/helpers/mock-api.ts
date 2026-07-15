@@ -6,7 +6,7 @@ export type MockQuestion = {
 };
 
 /**
- * Stubs the whole `@workspace/api-client-react` surface the game talks to,
+ * Stubs the whole `@repo/api-client-react` surface the game talks to,
  * since e2e here is about exercising the real browser/UI against a
  * deterministic API contract, not the actual quiz-server logic (that's
  * covered by api-server's own suites). Keeps an in-memory score list so a

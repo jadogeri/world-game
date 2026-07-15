@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import React from 'react';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { act, screen, waitFor } from '@testing-library/react';
@@ -12,7 +14,7 @@ const mockAudienceMutate = vi.fn();
 const mockExpertMutate = vi.fn();
 const mockScoreMutate = vi.fn();
 
-vi.mock('@workspace/api-client-react', () => ({
+vi.mock('@repo/api-client-react', () => ({
   useGetQuestion: (...args: unknown[]) => mockUseGetQuestion(...args),
   useVerifyAnswer: () => ({ mutate: mockVerifyMutate }),
   useUseFiftyFifty: () => ({ mutate: mockFiftyFiftyMutate }),
