@@ -34,7 +34,10 @@
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "dotenv": "catalog:",
-    "drizzle-kit": "^0.31.10"
+    "drizzle-kit": "^0.31.10",
+    "jest": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
   }
 }
 
