@@ -34,10 +34,11 @@
   <li><a href="#5-installation">5. Installation</a></li>
   <li><a href="#6-configuration">6. Configuration</a></li>
   <li><a href="#7-usage">7. Usage</a></li>
-  <li><a href="#8-game-mechanics">8. Game Mechanics</a></li>
-  <li><a href="#9-security">9. Security</a></li>
-  <li><a href="#10-bugs-fixed-and-lessons-learned">10. Bugs Fixed &amp; Lessons Learned</a></li>
-  <li><a href="#11-license">11. License</a></li>
+  <li><a href="#8-testing">8. Testing</a></li>
+  <li><a href="#9-game-mechanics">9. Game Mechanics</a></li>
+  <li><a href="#10-security">10. Security</a></li>
+  <li><a href="#11-bugs-fixed-and-lessons-learned">11. Bugs Fixed &amp; Lessons Learned</a></li>
+  <li><a href="#12-license">12. License</a></li>
 </ul>
 
 ---
@@ -159,7 +160,7 @@ Returns `{ "status": "ok" }`.
 
 ```mermaid
 graph TD
-  Client[Browser] --> Proxy[Reverse Proxy :80]
+  Web[Browser] --> Proxy[Reverse Proxy :80]
   Proxy -->|/api/*| API[Express API]
   Proxy -->|/world-game/*| FE[React Frontend]
   API --> Countries[countries.json + sources/*.json]
@@ -307,9 +308,44 @@ pnpm --filter @repo/api-spec run codegen
 ```
 
 ---
+<a id="8-testing"></a>
 
-<a id="8-game-mechanics"></a>
-## **8. Game Mechanics**
+## **8. Testing**
+
+### 🧪 Testing
+
+The repository uses [Vitest](https://vitest.dev/), [Jest](https://jestjs.io), and [Playwright](https://playwright.dev) for unit, integration, and E2E tests. Run tests using pnpm workspace commands:
+
+```bash
+# Run all test suites across the monorepo
+pnpm run test
+
+# Run tests only for the Express backend API
+pnpm run api:test
+
+# Run tests only for the React/Vite frontend
+pnpm run web:test
+
+# Run tests only for the database package
+pnpm run db:test
+```
+
+#### Coverage Reports
+```bash
+# Collect coverage for the Express backend API
+pnpm run api:test:coverage
+
+# Collect coverage for the React/Vite frontend
+pnpm run web:test:coverage
+
+# Collect coverage for the database package
+pnpm run db:test:coverage
+```
+
+---
+
+<a id="9-game-mechanics"></a>
+## **9. Game Mechanics**
 
 - **Money ladder** — 15 levels from $100 to $1,000,000, with safe havens at level 5 ($1,000) and level 10 ($32,000): a wrong answer drops winnings back to the last safe haven reached.
 - **Difficulty tiers by population** — Easy = the 60 most populous countries, Medium = the next 100, Hard = the rest, used as a proxy for "well-known vs. obscure" without hand-curating lists.
@@ -320,8 +356,8 @@ pnpm --filter @repo/api-spec run codegen
 
 ---
 
-<a id="9-security"></a>
-## **9. Security**
+<a id="10-security"></a>
+## **10. Security**
 
 - **Stateless, encrypted answer tokens** — instead of persisting quiz sessions server-side, each `/game/question` response embeds an AES-256-GCM-encrypted, 5-minute-expiring token carrying the correct answer. The client returns this token on `/game/verify` and `/game/fifty-fifty` calls. Encryption (not just signing) is required so the correct answer can't be read off the token by the client.
 - **No session/auth state** — the game requires no login; the only persisted data is opinionated leaderboard rows, keeping the attack surface small.
@@ -329,8 +365,8 @@ pnpm --filter @repo/api-spec run codegen
 
 ---
 
-<a id="10-bugs-fixed-and-lessons-learned"></a>
-## **10. Bugs Fixed & Lessons Learned**
+<a id="11-bugs-fixed-and-lessons-learned"></a>
+## **11. Bugs Fixed & Lessons Learned**
 
 - **Native-binding externals in esbuild bundles** — `@libsql/client` must be listed as a direct dependency of any package that imports `@repo/db` and gets bundled with esbuild, not just a transitive workspace dependency. esbuild externalizes native-binding packages (like `libsql`), and Node resolves those externals relative to the bundled file's own `node_modules`, not transitive workspace deps. `build.mjs` externalizes `libsql`/`@libsql/*` alongside other native-module packages for the same reason.
 - **Dataset joins degrade gracefully** — supplementary country datasets (TLD, government, independence, symbol, density, religion) don't perfectly match the base dataset's country names. Rather than erroring on a mismatch, unmatched countries simply get `null` for that field, and question generation skips any country/category combination with a null answer.
@@ -339,7 +375,7 @@ pnpm --filter @repo/api-spec run codegen
 
 ---
 
-<a id="11-license"></a>
-## **11. License**
+<a id="12-license"></a>
+## **12. License**
 
 MIT
