@@ -72,7 +72,7 @@ Backend developers, frontend engineers, and technical reviewers evaluating the a
 <a id="2-api-reference"></a>
 ## **2. API Reference**
 
-All routes are served by `api-server` and defined in `lib/api-spec/openapi.yaml` (source of truth), from which Zod schemas and React Query hooks are code-generated via Orval.
+All routes are served by `api` and defined in `lib/api-spec/openapi.yaml` (source of truth), from which Zod schemas and React Query hooks are code-generated via Orval.
 
 ### Health — `GET /health`
 
@@ -142,7 +142,7 @@ Returns `{ "status": "ok" }`.
 │                        Reverse Proxy                             │
 │           (path-based routing, mTLS, shared port 80)            │
 └────────────┬─────────────────────────┬──────────────────────────┘
-             │ /api-server/*           │ /world-game/*
+             │ /api/*           │ /web/*
       ┌──────▼──────┐          ┌───────▼──────┐
       │  Express API│          │  React/Vite  │
       │   (stateless)│         │   Frontend   │
@@ -160,7 +160,7 @@ Returns `{ "status": "ok" }`.
 ```mermaid
 graph TD
   Client[Browser] --> Proxy[Reverse Proxy :80]
-  Proxy -->|/api-server/*| API[Express API]
+  Proxy -->|/api/*| API[Express API]
   Proxy -->|/world-game/*| FE[React Frontend]
   API --> Countries[countries.json + sources/*.json]
   API --> Token[AES-256-GCM answer token]
@@ -175,7 +175,7 @@ graph TD
 |-------|-----------|---------|
 | Runtime | Node.js | 24 |
 | Language | TypeScript | 5.9 |
-| Monorepo | pnpm workspaces | 10 |
+| Monorepo | Turborepo pnpm workspaces | 10 |
 | API Framework | Express | 5 |
 | Database | Turso (libsql) + Drizzle ORM | 0.15 client |
 | Validation | Zod (`zod/v4`) + `drizzle-zod` | — |
@@ -185,14 +185,22 @@ graph TD
 | Frontend | React + Vite + TanStack Query + Framer Motion | — |
 | Routing (FE) | wouter | — |
 | UI Components | Radix UI + Tailwind CSS | — |
+| Testing | Vitest + Jest + Playwright  | — |
+| Version Control | Git + GitHub  | — |
+| CI/CD | GitHub Actions | — |
+| Hosting | Vercel + Render  | — |
+| Domain | Spaceship  | — |
+| Monitoring | Uptime  | — |
+
+
 
 <a id="33-folder-structure"></a>
 ### **3.3 Folder Structure**
 
 ```
 world-game/
-├── artifacts/
-│   ├── api-server/                    # Express backend
+├── apps/
+│   ├── api/                    # Express backend
 │   │   ├── src/
 │   │   │   ├── index.ts               # Bootstrap
 │   │   │   ├── app.ts                 # Express app (middleware, routes)
@@ -209,13 +217,13 @@ world-game/
 │   │   │       ├── countries.json     # merged base dataset (235 countries)
 │   │   │       └── sources/*.json     # raw supplementary datasets
 │   │   └── build.mjs                  # esbuild config
-│   ├── world-game/                    # React/Vite frontend
+│   ├── web/                    # React/Vite frontend
 │   │   └── src/
 │   │       ├── pages/                 # start, game, leaderboard screens
 │   │       ├── components/ui/         # Radix-based UI primitives
 │   │       └── components/            # theme provider/toggle
 │   └── mockup-sandbox/                # Canvas component preview server
-├── lib/
+├── packages/
 │   ├── db/                            # Drizzle schema + Turso client
 │   ├── api-spec/                      # openapi.yaml (source of truth)
 │   ├── api-zod/                       # generated Zod schemas
