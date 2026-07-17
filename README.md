@@ -285,6 +285,7 @@ pnpm --filter @repo/db run push
 | `SESSION_SECRET` | secret | Symmetric key used to encrypt/decrypt per-question answer tokens |
 | `CLIENT_PORT` | env var | The port number used to run the Vite frontend development server (e.g., 4000) |
 | `SERVER_PORT` | env var | The port number used to run the express backend development server (e.g., 3000) |
+| `BASE_PATH` | env var | The port number used to run the express frontend development server (e.g., 3000) |
 
 
 <a id="7-usage"></a>
