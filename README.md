@@ -73,7 +73,7 @@ Backend developers, frontend engineers, and technical reviewers evaluating the a
 <a id="2-api-reference"></a>
 ## **2. API Reference**
 
-All routes are served by `api` and defined in `lib/api-spec/openapi.yaml` (source of truth), from which Zod schemas and React Query hooks are code-generated via Orval.
+All routes are served by `api` and defined in `packages/api-spec/openapi.yaml` (source of truth), from which Zod schemas and React Query hooks are code-generated via Orval.
 
 ### Health — `GET /health`
 
