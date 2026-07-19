@@ -165,9 +165,9 @@ graph LR
     end
 
     subgraph JEST["Jest Test Runner (in-process)"]
-        UNIT["test/unit/\n*.unit.jest.ts\nPure logic, no I/O"]
-        INTEGRATION["test/integration/\n*.integration.jest.ts\nSupertest + in-proc Express\nFake DB mock"]
-        E2E["test/e2e/\n*.e2e.jest.ts\nReal TCP server\nFake DB mock"]
+        UNIT["test/unit/\n*.unit.test.ts\nPure logic, no I/O"]
+        INTEGRATION["test/integration/\n*.integration.test.ts\nSupertest + in-proc Express\nFake DB mock"]
+        E2E["test/e2e/\n*.e2e.test.ts\nReal TCP server\nFake DB mock"]
     end
 
     FAKEDB[("In-Memory\nFake DB\n(no network)")]
