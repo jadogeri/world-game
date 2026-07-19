@@ -10,8 +10,8 @@ Version: 1.0.0 | Platform: TurboRepo (pnpm monorepo)
 | # | Document | Format | Tool |
 |---|----------|--------|------|
 | 1 | [Sequence Diagram](diagrams/sequence-diagram.md) | Mermaid | Mermaid |
-| 2 | [Use Case Diagram](diagrams/use-case-diagram.md) | Mermaid | Mermaid |
-| 3 | [Use Case Description](diagrams/use-case-description.md) | Markdown | — |
+| 2 | [Use Case Diagram](diagrams/use-case/use-case-diagram.md) | Mermaid | Mermaid |
+| 3 | [Use Case Description](diagrams/use-case/use-case-description.md) | Markdown | — |
 | 4 | [Process Flow Diagram](diagrams/process-flow-diagram.md) | Mermaid | Mermaid |
 | 5 | [ERD — Conceptual View](diagrams/erd/erd-conceptual.drawio) | draw.io XML | draw.io |
 | 6 | [ERD — Logical View](diagrams/erd/erd-logical.drawio) | draw.io XML | draw.io |
