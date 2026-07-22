@@ -1,0 +1,7 @@
+setup:
+  - app: wmodular-suite
+    config: dev_world_game
+    path: apps/web
+  - app: modular-suite
+    config: dev_world_game
+    path: apps/api
