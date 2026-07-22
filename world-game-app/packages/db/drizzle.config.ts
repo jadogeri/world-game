@@ -1,4 +1,5 @@
 // packages/db/drizzle.config.ts
+/*
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,25 +21,30 @@ export default defineConfig({
     : { url: url!, authToken },
 });
 
-
-
-/*import { defineConfig } from "drizzle-kit";
+*/import dotenv from "dotenv";
 import path from "path";
+import { fileURLToPath } from "url";
+import { defineConfig } from "drizzle-kit";
 
-if (!process.env.TURSO_DATABASE_URL) {
-  throw new Error("TURSO_DATABASE_URL, ensure the database is provisioned");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+let url = process.env.TURSO_DATABASE_URL;
+const authToken = process.env.TURSO_AUTH_TOKEN;
+
+// 🛠️ DEV PATH SAFETY: Resolve local relative files to the root directory
+if (url?.startsWith('file:.')) {
+  const relativePath = url.replace('file:', ''); // Extracts "./world-game.db"
+  url = `file:${path.resolve(__dirname, "../../", relativePath)}`; // Points to workspace root
 }
 
-if (!process.env.TURSO_AUTH_TOKEN) {
-  throw new Error("TURSO_AUTH_TOKEN, ensure the database is provisioned");
-}
+const isLocal = url?.startsWith('file:');
 
 export default defineConfig({
-  schema: path.join(__dirname, "./src/schema/index.ts"),
-  dialect: "turso",
-  dbCredentials: {
-    url: process.env.TURSO_DATABASE_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN,
-  },
+  out: './src/migrations',
+  schema: './src/schema/',
+  dialect: isLocal ? 'sqlite' : 'turso',
+  dbCredentials: isLocal
+    ? { url: url! }
+    : { url: url!, authToken },
 });
-*/

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "codegen": "orval --config ./orval.config.ts && pnpm -w run typecheck:packages"
+
   },
   "devDependencies": {
     "orval": "^8.20.0"

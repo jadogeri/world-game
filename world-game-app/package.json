@@ -18,7 +18,7 @@
     "db:studio": "pnpm --filter @repo/db run db:studio",
     "db:drop": "pnpm --filter @repo/db run db:drop",
     "db:clear": "pnpm --filter @repo/db run db:clear",
-    "codegen": "turbo run codegen",
+    "codegen": "pnpm --filter  @repo/api-spec run codegen",
     "api:test": "pnpm --filter @repo/api run test",
     "web:test": "pnpm --filter @repo/web run test",
     "api:test:coverage": "pnpm --filter @repo/api run test:coverage",
