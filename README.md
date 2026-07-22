@@ -192,6 +192,7 @@ graph TD
 | Hosting | Vercel + Render  | — |
 | Domain | Spaceship  | — |
 | Monitoring | Uptime  | — |
+| Secret Manager | Doppler  | — |
 
 
 
@@ -286,6 +287,7 @@ pnpm --filter @repo/db run push
 | `CLIENT_PORT` | env var | The port number used to run the Vite frontend development server (e.g., 4000) |
 | `SERVER_PORT` | env var | The port number used to run the express backend development server (e.g., 3000) |
 | `BASE_PATH` | env var | The port number used to run the express frontend development server (e.g., 3000) |
+| `VITE_API_URL`| env var | The api used tohandle frontend requests (e.g http://localhost:4000 or http://render.com/api) |
 
 
 <a id="7-usage"></a>
