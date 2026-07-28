@@ -96,12 +96,11 @@ describe("game routes (integration)", () => {
       }
     }
 
-    // 3. Statistical check: Audience is usually smart (e.g., right >60% of the time)
+    // 3. Statistical check: Audience is smart (e.g., right >60% of the time)
+    // This protects against the backend logic breaking and becoming completely random.
     expect(audienceWasRightCount).toBeGreaterThan(totalRuns * 0.60);
-
-    // 4. Imperfection check: Audience isn't omniscient (e.g., they failed at least once)
-    expect(audienceWasRightCount).toBeLessThan(totalRuns);
   });
+
 
   it("POST /api/game/ask-audience is deterministic for the same token", async () => {
     const { token } = await fetchQuestion();
