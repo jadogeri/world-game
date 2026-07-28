@@ -73,17 +73,34 @@ describe("game routes (integration)", () => {
     expect(res.body.removeIndices).not.toContain(payload.correctIndex);
   });
 
-  it("POST /api/game/ask-audience returns four percentages summing to 100, favoring the correct answer", async () => {
-    const { token } = await fetchQuestion();
-    const payload = verifyAnswerToken(token)!;
+  it("POST /api/game/ask-audience returns four percentages summing to 100 and favors the correct answer on average", async () => {
+    let audienceWasRightCount = 0;
+    const totalRuns = 20;
 
-    const res = await request(app).post("/api/game/ask-audience").send({ token });
+    for (let i = 0; i < totalRuns; i++) {
+      const { token } = await fetchQuestion();
+      const payload = verifyAnswerToken(token)!;
 
-    expect(res.status).toBe(200);
-    expect(res.body.percentages).toHaveLength(4);
-    expect(res.body.percentages.reduce((a: number, b: number) => a + b, 0)).toBe(100);
-    const correctShare = res.body.percentages[payload.correctIndex];
-    expect(correctShare).toBe(Math.max(...res.body.percentages));
+      const res = await request(app).post("/api/game/ask-audience").send({ token });
+
+      expect(res.status).toBe(200);
+      expect(res.body.percentages).toHaveLength(4);
+      
+      // 1. Math check: Percentages must always total exactly 100%
+      expect(res.body.percentages.reduce((a: number, b: number) => a + b, 0)).toBe(100);
+
+      // 2. Track how often the audience picked the correct choice as the maximum
+      const correctShare = res.body.percentages[payload.correctIndex];
+      if (correctShare === Math.max(...res.body.percentages)) {
+        audienceWasRightCount++;
+      }
+    }
+
+    // 3. Statistical check: Audience is usually smart (e.g., right >60% of the time)
+    expect(audienceWasRightCount).toBeGreaterThan(totalRuns * 0.60);
+
+    // 4. Imperfection check: Audience isn't omniscient (e.g., they failed at least once)
+    expect(audienceWasRightCount).toBeLessThan(totalRuns);
   });
 
   it("POST /api/game/ask-audience is deterministic for the same token", async () => {
