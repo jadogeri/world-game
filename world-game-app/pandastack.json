@@ -1,5 +1,6 @@
 {
   "root": "world-game-app",
+  "node": "22.x",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter @repo/api run build",
   "startCommand": "pnpm --filter @repo/api run dev",
