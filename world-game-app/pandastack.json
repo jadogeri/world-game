@@ -1,0 +1,10 @@
+{
+  "root": "world-game-app",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm --filter @repo/api run build",
+  "startCommand": "pnpm --filter @repo/api run dev",
+  "watch": [
+    "apps/api/**",
+    "packages/**"
+  ]
+}
