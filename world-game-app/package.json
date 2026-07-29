@@ -6,7 +6,7 @@
     "web:dev": "pnpm --filter @repo/web run dev",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "test": "pnpm run api:test && pnpm run web:test && pnpm run db:test",
-    
+    "start": "pnpm --filter @repo/api run start",
     "dev": "doppler run -- turbo run dev", 
     
     "lint": "turbo run lint",
