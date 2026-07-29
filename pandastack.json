@@ -4,9 +4,9 @@
   "node": "22.x",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter @repo/api run build",
-  "startCommand": "node world-game-app/apps/api/dist/index.mjs",
+  "startCommand": "pnpm --filter @repo/api run start",
   "watch": [
-    "world-game-app/apps/api/**",
-    "world-game-app/packages/**"
+    "apps/api/**",
+    "packages/**"
   ]
 }
