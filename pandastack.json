@@ -5,7 +5,7 @@
   "buildCommand": "pnpm --filter @repo/api run build",
   "startCommand": "pnpm --filter @repo/api run start",
   "watch": [
-    "apps/api/**",
-    "packages/**"
+    "world-game-app/apps/api/**",
+    "world-game-app/packages/**"
   ]
 }
