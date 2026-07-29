@@ -1,9 +1,10 @@
 {
+  "type": "web-service",
   "root": "world-game-app",
   "node": "22.x",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter @repo/api run build",
-  "startCommand": "pnpm --filter @repo/api run start",
+  "startCommand": "node world-game-app/apps/api/dist/index.mjs",
   "watch": [
     "world-game-app/apps/api/**",
     "world-game-app/packages/**"
