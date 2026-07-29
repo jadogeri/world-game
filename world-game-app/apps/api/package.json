@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
     "build": "node ./build.mjs",
-    "start": "node --enable-source-maps ./dist/index.mjs",
+    "node:start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc --build tsconfig.json",
     "test": "jest --config jest.config.cjs",
     "test:unit": "jest --config jest.config.cjs test/unit",

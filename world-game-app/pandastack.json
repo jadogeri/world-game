@@ -3,7 +3,7 @@
   "node": "22.x",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter @repo/api run build",
-  "startCommand": "pnpm --filter @repo/api run dev",
+  "startCommand": "pnpm --filter @repo/api run start",
   "watch": [
     "apps/api/**",
     "packages/**"
